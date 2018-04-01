@@ -1,5 +1,5 @@
 name := "car-service"
-
+scalaVersion := "2.11.5"
 lazy val commonSettings = Seq(
   organization := "com.cartracker",
   version := "1.0",

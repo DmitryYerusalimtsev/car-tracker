@@ -12,7 +12,7 @@ class CarSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
 
   describe("car") {
 
-    describe("given RespondTemperature message") {
+    describe("given RespondTelemetry message") {
       it("should reply with empty reading if no telemetry is known") {
         val probe = TestProbe()
         val deviceActor = system.actorOf(Car.props("car"))
