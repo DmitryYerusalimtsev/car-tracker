@@ -9,7 +9,7 @@ import com.cartracker.api.config.Settings
 import scala.concurrent.{Await, Promise}
 import scala.concurrent.duration.Duration
 
-class WebServer {
+object WebServer {
   def main(args: Array[String]) {
 
     implicit val system = ActorSystem("facebook-user-service-system")
