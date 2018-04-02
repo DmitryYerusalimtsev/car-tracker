@@ -1,5 +1,5 @@
 name := "car-service"
-scalaVersion := "2.11.5"
+
 lazy val commonSettings = Seq(
   organization := "com.cartracker",
   version := "1.0",
@@ -25,3 +25,15 @@ lazy val application = (project in file("application"))
 
     libraryDependencies ++= akka ++ scalaTest
   ).dependsOn(core)
+
+lazy val api = (project in file("api"))
+  .settings(
+    commonSettings,
+
+    libraryDependencies ++= Seq(
+      "com.typesafe.akka" %% "akka-http" % "10.0.10",
+      "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.10",
+      "com.typesafe" % "config" % "1.3.1",
+      "org.apache.commons" % "commons-lang3" % "3.7"
+    )
+  ).dependsOn(core, application)

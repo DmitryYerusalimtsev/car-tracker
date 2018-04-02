@@ -16,6 +16,11 @@ class Car(carId: String) extends Actor with ActorLogging {
   override def postStop(): Unit = log.info("Car actor {} stopped", carId)
 
   override def receive: Receive = {
+    case RecordTelemetry(id, value) ⇒
+      log.info("Recorded telemetry reading {} with {}", value, id)
+      lastTelemetry = Some(value)
+      sender() ! TelemetryRecorded(id)
+
     case ReadTelemetry(id) ⇒
       sender() ! RespondTelemetry(id, lastTelemetry)
   }
@@ -24,8 +29,10 @@ class Car(carId: String) extends Actor with ActorLogging {
 object Car {
   def props(carId: String): Props = Props(new Car(carId))
 
-  final case class ReadTelemetry(requestId: UUID)
+  final case class RecordTelemetry(requestId: UUID, value: Telemetry)
+  final case class TelemetryRecorded(requestId: UUID)
 
+  final case class ReadTelemetry(requestId: UUID)
   final case class RespondTelemetry(requestId: UUID, value: Option[Telemetry])
 
 }
