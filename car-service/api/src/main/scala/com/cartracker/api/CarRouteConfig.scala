@@ -15,10 +15,12 @@ object CarRouteConfig {
   }
 
   def route(): Route = {
-    post {
-      path("car" / "recordtelemetry") {
-        entity(as[RecordTelemetryDto]) { dto =>
+    path("car") {
+      post {
+        path("recordtelemetry") {
+          entity(as[RecordTelemetryDto]) { dto =>
 
+          }
         }
       }
     }
