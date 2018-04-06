@@ -58,8 +58,8 @@ final class CarRouteConfig(system: ActorSystem) {
             val requestId = UUID.randomUUID()
             val result = for (
               carResponse <- getCar(requestId, id.toString);
-              dto <- carResponse.car ! RecordTelemetry(requestId, dto.toEntity)
-            ) yield dto
+              _ <- carResponse.car ! RecordTelemetry(requestId, dto.toEntity)
+            ) yield new ResultDto()
             complete(result)
           }
         }
