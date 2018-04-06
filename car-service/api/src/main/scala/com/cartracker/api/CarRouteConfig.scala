@@ -1,6 +1,7 @@
 package com.cartracker.api
 
 import java.util.UUID
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
@@ -12,8 +13,9 @@ import com.cartracker.api.dtos.{GetTelemetryDto, ResultDto, TelemetryDto}
 import com.cartracker.api.json.CarServiceFormatSupport._
 import com.cartracker.application.actors.Car.{ReadTelemetry, RecordTelemetry, RespondTelemetry}
 import com.cartracker.application.actors.CarsManager
-import com.cartracker.application.actors.CarsManager.{GetCar, RespondCar}
+import com.cartracker.application.actors.CarsManager.{GetCar, RequestTrackingCar, RespondCar}
 import org.apache.commons.lang3.exception.ExceptionUtils
+
 import scala.concurrent.duration._
 
 final class CarRouteConfig(system: ActorSystem) {
@@ -31,12 +33,8 @@ final class CarRouteConfig(system: ActorSystem) {
     pathPrefix("car" / JavaUUID) { id =>
       post {
         path("register") {
-          val requestId = UUID.randomUUID()
-          val resultDto = for {
-            carResponse <- getCar(requestId, id.toString)
-            _ <- carResponse.car ! RecordTelemetry(requestId, dto.toEntity)
-          } yield new ResultDto()
-          complete(resultDto)
+          carsManager ! RequestTrackingCar(UUID.randomUUID(), id.toString)
+          complete(new ResultDto())
 
         } ~ get {
           implicit val timeout: Timeout = 5.seconds
