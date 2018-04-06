@@ -16,12 +16,12 @@ class Car(carId: String) extends Actor with ActorLogging {
   override def postStop(): Unit = log.info("Car actor {} stopped", carId)
 
   override def receive: Receive = {
-    case RecordTelemetry(id, value) ⇒
+    case RecordTelemetry(id, value) =>
       log.info("Recorded telemetry reading {} with {}", value, id)
       lastTelemetry = Some(value)
       sender() ! TelemetryRecorded(id)
 
-    case ReadTelemetry(id) ⇒
+    case ReadTelemetry(id) =>
       sender() ! RespondTelemetry(id, lastTelemetry)
   }
 }
