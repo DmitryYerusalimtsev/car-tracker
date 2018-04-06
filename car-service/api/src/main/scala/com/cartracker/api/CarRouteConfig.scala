@@ -55,9 +55,12 @@ final class CarRouteConfig(system: ActorSystem) {
 
         } ~ post {
           entity(as[TelemetryDto]) { dto =>
-            val car = getActor(id.toString)
-            car ! RecordTelemetry(UUID.randomUUID(), dto.toEntity)
-            complete(new ResultDto())
+            val requestId = UUID.randomUUID()
+            val result = for (
+              carResponse <- getCar(requestId, id.toString);
+              dto <- carResponse.car ! RecordTelemetry(requestId, dto.toEntity)
+            ) yield dto
+            complete(result)
           }
         }
       }
