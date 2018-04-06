@@ -30,7 +30,7 @@ final class CarRouteConfig(system: ActorSystem) {
   def route(): Route = {
     pathPrefix("car" / JavaUUID) { id =>
       post {
-        entity(as[TelemetryDto]) { dto =>
+        path("register") {
           val requestId = UUID.randomUUID()
           val resultDto = for {
             carResponse <- getCar(requestId, id.toString)
@@ -56,9 +56,10 @@ final class CarRouteConfig(system: ActorSystem) {
         } ~ post {
           entity(as[TelemetryDto]) { dto =>
             val requestId = UUID.randomUUID()
+
             val result = for (
               carResponse <- getCar(requestId, id.toString);
-              _ <- carResponse.car ! RecordTelemetry(requestId, dto.toEntity)
+              _ <- carResponse.car ! RecordTelemetry(UUID.randomUUID(), dto.toEntity)
             ) yield new ResultDto()
             complete(result)
           }
