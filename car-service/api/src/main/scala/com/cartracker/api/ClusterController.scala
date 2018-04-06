@@ -1,4 +1,4 @@
-package com.cartracker.application.actors
+package com.cartracker.api
 
 import akka.actor.{Actor, Props}
 import akka.cluster.Cluster

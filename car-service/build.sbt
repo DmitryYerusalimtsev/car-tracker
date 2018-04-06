@@ -31,7 +31,7 @@ lazy val api = (project in file("api"))
   .settings(
     commonSettings,
 
-    libraryDependencies ++= Seq(
+    libraryDependencies ++= akka ++ Seq(
       "com.typesafe.akka" %% "akka-http" % "10.0.10",
       "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.10",
       "com.typesafe" % "config" % "1.3.1",

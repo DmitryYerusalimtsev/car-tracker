@@ -2,11 +2,12 @@ package com.cartracker.api
 
 import java.util.Calendar
 
+import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 
-object MainRouter {
-  val routes = defaultRoutes() ~ CarRouteConfig.route()
+final class MainRouter(system: ActorSystem) {
+  val routes = defaultRoutes() ~ CarRouteConfig(system).route()
 
   private def defaultRoutes(): Route = {
     get {
@@ -15,4 +16,8 @@ object MainRouter {
       }
     }
   }
+}
+
+object MainRouter {
+  def apply(implicit system: ActorSystem): MainRouter = new MainRouter(system)
 }

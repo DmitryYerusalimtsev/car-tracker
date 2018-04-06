@@ -1,7 +1,7 @@
 package com.cartracker.carservice.core
 
 case class Telemetry(
-                      remainingFuel: Integer,
+                      remainingFuel: Int,
                       currentPosition: Position
                     )
 

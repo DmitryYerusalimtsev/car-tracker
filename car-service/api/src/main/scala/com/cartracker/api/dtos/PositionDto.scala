@@ -1,3 +1,7 @@
 package com.cartracker.api.dtos
 
-case class PositionDto(longitude: Float, latitude: Float)
+import com.cartracker.carservice.core.Position
+
+case class PositionDto(longitude: Float, latitude: Float){
+  def toEntity: Position = Position(longitude, latitude)
+}
