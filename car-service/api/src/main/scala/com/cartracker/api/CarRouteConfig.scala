@@ -1,21 +1,19 @@
 package com.cartracker.api
 
+import java.util.UUID
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.{HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
-import com.cartracker.api.dtos.{GetTelemetryDto, ResultDto, TelemetryDto}
-import org.apache.commons.lang3.exception.ExceptionUtils
-import com.cartracker.api.json.CarServiceFormatSupport._
-import com.cartracker.application.actors.{Car, CarsManager}
-import com.cartracker.application.actors.Car.{ReadTelemetry, RecordTelemetry, RespondTelemetry}
-import java.util.UUID
-
-import com.cartracker.api.dtos.extensions.EntityMappingExtensions._
-import akka.util.Timeout
 import akka.pattern.ask
+import akka.util.Timeout
+import com.cartracker.api.dtos.extensions.EntityMappingExtensions._
+import com.cartracker.api.dtos.{GetTelemetryDto, ResultDto, TelemetryDto}
+import com.cartracker.api.json.CarServiceFormatSupport._
+import com.cartracker.application.actors.Car.{ReadTelemetry, RecordTelemetry, RespondTelemetry}
+import com.cartracker.application.actors.CarsManager
 import com.cartracker.application.actors.CarsManager.{GetCar, RespondCar}
-
+import org.apache.commons.lang3.exception.ExceptionUtils
 import scala.concurrent.duration._
 
 final class CarRouteConfig(system: ActorSystem) {
@@ -35,7 +33,7 @@ final class CarRouteConfig(system: ActorSystem) {
         entity(as[TelemetryDto]) { dto =>
           val requestId = UUID.randomUUID()
           val resultDto = for {
-            carResponse <- getCar(requestId, id.toString);
+            carResponse <- getCar(requestId, id.toString)
             _ <- carResponse.car ! RecordTelemetry(requestId, dto.toEntity)
           } yield new ResultDto()
           complete(resultDto)
@@ -44,7 +42,7 @@ final class CarRouteConfig(system: ActorSystem) {
           implicit val timeout: Timeout = 5.seconds
           val requestId = UUID.randomUUID()
 
-          val dto = for (
+          val result = for (
             carResponse <- getCar(requestId, id.toString);
             dto <- (carResponse.car ? ReadTelemetry(requestId)).mapTo[RespondTelemetry].map(rt => {
               rt.value match {
@@ -53,7 +51,7 @@ final class CarRouteConfig(system: ActorSystem) {
               }
             })
           ) yield dto
-          complete(dto)
+          complete(result)
 
         } ~ post {
           entity(as[TelemetryDto]) { dto =>
