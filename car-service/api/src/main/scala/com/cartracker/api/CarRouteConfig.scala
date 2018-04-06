@@ -34,11 +34,11 @@ final class CarRouteConfig(system: ActorSystem) {
       post {
         entity(as[TelemetryDto]) { dto =>
           val requestId = UUID.randomUUID()
-          val dto = for {
+          val resultDto = for {
             carResponse <- getCar(requestId, id.toString);
             _ <- carResponse.car ! RecordTelemetry(requestId, dto.toEntity)
           } yield new ResultDto()
-          complete(dto)
+          complete(resultDto)
 
         } ~ get {
           implicit val timeout: Timeout = 5.seconds
