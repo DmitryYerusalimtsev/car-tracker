@@ -4,5 +4,3 @@ case class Telemetry(
                       remainingFuel: Int,
                       currentPosition: Position
                     )
-
-case class Position(longitude: Float, latitude: Float)

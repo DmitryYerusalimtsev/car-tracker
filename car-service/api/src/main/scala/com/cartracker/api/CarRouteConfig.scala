@@ -29,6 +29,8 @@ final class CarRouteConfig(system: ActorSystem) {
     }
   }
 
+  implicit val timeout: Timeout = 5.seconds
+
   def route(): Route = {
     pathPrefix("car" / JavaUUID) { id =>
       post {
@@ -36,31 +38,30 @@ final class CarRouteConfig(system: ActorSystem) {
           carsManager ! RequestTrackingCar(UUID.randomUUID(), id.toString)
           complete(new ResultDto())
 
-        } ~ get {
-          implicit val timeout: Timeout = 5.seconds
+        }
+      } ~ get {
+        val requestId = UUID.randomUUID()
+
+        val result = for (
+          carResponse <- getCar(requestId, id.toString);
+          dto <- (carResponse.car ? ReadTelemetry(requestId)).mapTo[RespondTelemetry].map(rt => {
+            rt.value match {
+              case Some(t) => new GetTelemetryDto(t.toDto)
+              case None => new GetTelemetryDto("No telemetry information for specified car")
+            }
+          })
+        ) yield dto
+
+        complete(result)
+
+      } ~ post {
+        entity(as[TelemetryDto]) { dto =>
           val requestId = UUID.randomUUID()
 
-          val result = for (
-            carResponse <- getCar(requestId, id.toString);
-            dto <- (carResponse.car ? ReadTelemetry(requestId)).mapTo[RespondTelemetry].map(rt => {
-              rt.value match {
-                case Some(t) => new GetTelemetryDto(t.toDto)
-                case None => new GetTelemetryDto("No telemetry information for specified car")
-              }
-            })
-          ) yield dto
-          complete(result)
+          getCar(requestId, id.toString).map(carResponse =>
+            carResponse.car ! RecordTelemetry(requestId, dto.toEntity))
 
-        } ~ post {
-          entity(as[TelemetryDto]) { dto =>
-            val requestId = UUID.randomUUID()
-
-            val result = for (
-              carResponse <- getCar(requestId, id.toString);
-              _ <- carResponse.car ! RecordTelemetry(UUID.randomUUID(), dto.toEntity)
-            ) yield new ResultDto()
-            complete(result)
-          }
+          complete(new ResultDto())
         }
       }
     }

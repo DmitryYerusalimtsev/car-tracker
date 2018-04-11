@@ -20,7 +20,7 @@ class CarsManager extends Actor with ActorLogging {
         case Some(_) => CarTracking(id)
         case None =>
           log.info("Creating car actor for {}", carId)
-          val carActor = context.actorOf(Car.props(carId), s"car-${carId}")
+          val carActor = context.actorOf(Car.props(carId), s"car-$carId")
           context.watch(carActor)
           carIdToActor += carId -> carActor
           sender() ! CarTracking(id)
@@ -29,8 +29,8 @@ class CarsManager extends Actor with ActorLogging {
     case GetCar(id, carId) =>
       log.info("Retrieving a car with id {}", carId)
       carIdToActor.get(carId) match {
-        case Some(actor) => RespondCar(id, actor)
-        case None => Failure
+        case Some(actor) => sender() ! RespondCar(id, actor)
+        case None => sender() ! Failure
       }
   }
 }
