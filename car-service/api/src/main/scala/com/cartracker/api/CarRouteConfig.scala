@@ -37,8 +37,8 @@ final class CarRouteConfig(system: ActorSystem) {
         path("register") {
           carsManager ! RequestTrackingCar(UUID.randomUUID(), id.toString)
           complete(new ResultDto())
-
         }
+
       } ~ get {
         val requestId = UUID.randomUUID()
 
