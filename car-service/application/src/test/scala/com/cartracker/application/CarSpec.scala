@@ -5,18 +5,21 @@ import java.util.UUID
 import akka.actor.ActorSystem
 import akka.testkit.TestProbe
 import com.cartracker.application.actors.Car
+import com.cartracker.application.mocks.MockTelemetryRepository
 import com.cartracker.carservice.core.{Position, Telemetry}
 import org.scalatest._
 
 class CarSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
   implicit val system = ActorSystem()
 
+  val rep = new MockTelemetryRepository()
+
   describe("Car Actor") {
 
     describe("given RespondTelemetry message") {
 
       val probe = TestProbe()
-      val deviceActor = system.actorOf(Car.props("car"))
+      val deviceActor = system.actorOf(Car.props("car", rep))
       val requestId = UUID.randomUUID()
 
       val telemetry = Telemetry(10, Position(1, 1))

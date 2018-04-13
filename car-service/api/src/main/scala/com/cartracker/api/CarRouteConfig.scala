@@ -14,6 +14,7 @@ import com.cartracker.api.json.CarServiceFormatSupport._
 import com.cartracker.application.actors.Car.{ReadTelemetry, RecordTelemetry, RespondTelemetry}
 import com.cartracker.application.actors.CarsManager
 import com.cartracker.application.actors.CarsManager.{GetCar, RequestTrackingCar, RespondCar}
+import com.cartracker.application.persistance.ignite.IgniteTelemetryRepository
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import scala.concurrent.duration._
@@ -21,7 +22,7 @@ import scala.concurrent.duration._
 final class CarRouteConfig(system: ActorSystem) {
 
   private implicit val executionContext = system.dispatcher
-  private val carsManager = system.actorOf(CarsManager.props(), "cars-manager")
+  private val carsManager = system.actorOf(CarsManager.props(new IgniteTelemetryRepository {}), "cars-manager")
 
   val exceptionHandler = ExceptionHandler {
     case ex: Exception => extractUri { _ =>

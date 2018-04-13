@@ -12,6 +12,12 @@ val akka = Seq(
   "com.typesafe.akka" %% "akka-testkit" % "2.5.11" % Test
 )
 
+val ignite = Seq(
+  "org.apache.ignite"  % "ignite-core" % "2.4.0",
+  "org.apache.ignite"  % "ignite-spring" % "2.4.0",
+  "org.apache.ignite"  % "ignite-indexing" % "2.4.0"
+)
+
 val scalaTest = Seq(
   "org.scalactic" %% "scalactic" % "3.0.5",
   "org.scalatest" %% "scalatest" % "3.0.5" % Test
@@ -24,7 +30,7 @@ lazy val application = (project in file("application"))
   .settings(
     commonSettings,
 
-    libraryDependencies ++= akka ++ scalaTest
+    libraryDependencies ++= akka ++ scalaTest ++ ignite
   ).dependsOn(core)
 
 lazy val api = (project in file("api"))
