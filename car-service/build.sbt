@@ -13,9 +13,9 @@ val akka = Seq(
 )
 
 val ignite = Seq(
-  "org.apache.ignite"  % "ignite-core" % "2.4.0",
-  "org.apache.ignite"  % "ignite-spring" % "2.4.0",
-  "org.apache.ignite"  % "ignite-indexing" % "2.4.0"
+  "org.apache.ignite" % "ignite-core" % "2.4.0",
+  "org.apache.ignite" % "ignite-spring" % "2.4.0",
+  "org.apache.ignite" % "ignite-indexing" % "2.4.0"
 )
 
 val scalaTest = Seq(
@@ -37,7 +37,7 @@ lazy val api = (project in file("api"))
   .settings(
     commonSettings,
 
-    libraryDependencies ++= akka ++ Seq(
+    libraryDependencies ++= akka ++ ignite ++ Seq(
       "com.typesafe.akka" %% "akka-http" % "10.0.10",
       "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.10",
       "com.typesafe" % "config" % "1.3.1",

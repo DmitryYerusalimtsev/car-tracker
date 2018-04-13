@@ -16,13 +16,14 @@ import com.cartracker.application.actors.CarsManager
 import com.cartracker.application.actors.CarsManager.{GetCar, RequestTrackingCar, RespondCar}
 import com.cartracker.application.persistance.ignite.IgniteTelemetryRepository
 import org.apache.commons.lang3.exception.ExceptionUtils
+import org.apache.ignite.Ignite
 
 import scala.concurrent.duration._
 
-final class CarRouteConfig(system: ActorSystem) {
+final class CarRouteConfig(system: ActorSystem, ignite: Ignite) {
 
   private implicit val executionContext = system.dispatcher
-  private val carsManager = system.actorOf(CarsManager.props(new IgniteTelemetryRepository {}), "cars-manager")
+  private val carsManager = system.actorOf(CarsManager.props(IgniteTelemetryRepository(ignite)), "cars-manager")
 
   val exceptionHandler = ExceptionHandler {
     case ex: Exception => extractUri { _ =>
@@ -73,5 +74,5 @@ final class CarRouteConfig(system: ActorSystem) {
 }
 
 object CarRouteConfig {
-  def apply(implicit system: ActorSystem): CarRouteConfig = new CarRouteConfig(system)
+  def apply(implicit system: ActorSystem, ignite: Ignite): CarRouteConfig = new CarRouteConfig(system, ignite)
 }
