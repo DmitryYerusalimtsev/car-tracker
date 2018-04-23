@@ -27,7 +27,7 @@ trait IgniteTelemetryRepository extends TelemetryRepository with TryWithResource
     val query = new ScanQuery[String, Telemetry]((k: String, _: Telemetry) => carIds.contains(getIdFromKey(k)))
     use(cache.query(query)) { cursor =>
       val result = new MutableMap[String, Option[Telemetry]].empty
-      cursor.forEach(asJavaConsumer(e => result += e.getKey -> Option(e.getValue)))
+      cursor.forEach(asJavaConsumer(e => result += getIdFromKey(e.getKey) -> Option(e.getValue)))
       result.toMap
     }
   }
