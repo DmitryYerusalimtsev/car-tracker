@@ -6,7 +6,9 @@ import com.cartracker.carservice.core.Telemetry
 object EntityMappingExtensions {
 
   implicit class ExtendedTelemetry(val value: Telemetry) {
-    def toDto = TelemetryDto(value.remainingFuel,
+    def toDto = TelemetryDto(
+      value.timestamp.toString,
+      value.remainingFuel,
       PositionDto(
         value.currentPosition.longitude,
         value.currentPosition.latitude))

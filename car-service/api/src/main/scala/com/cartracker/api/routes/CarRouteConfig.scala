@@ -15,7 +15,7 @@ import com.cartracker.application.actors.Car.{ReadTelemetry, RecordTelemetry, Re
 import com.cartracker.application.actors.CarsManager
 import com.cartracker.application.actors.CarsManager.{GetCar, RequestTrackingCar, RespondCar}
 import com.cartracker.application.persistance.ignite.IgniteTelemetryRepository
-import com.cartracker.carservice.core.{Position, Telemetry}
+import com.cartracker.carservice.core.{Telemetry}
 import org.apache.commons.lang3.exception.ExceptionUtils
 
 import scala.concurrent.duration._
@@ -41,7 +41,7 @@ final class CarRouteConfig(system: ActorSystem) {
             .mapTo[CarsManager.AllCarTelemetry]
             .map(r => new GetAllTelemetryDto(r.telemetryMap.map {
               case (carId, telemetry) => {
-                val telemetryDto = telemetry.getOrElse(Telemetry(0, Position(0, 0))).toDto
+                val telemetryDto = telemetry.getOrElse(new Telemetry()).toDto
                 CarTelemetryDto(carId, telemetryDto)
               }
             }.toSeq))

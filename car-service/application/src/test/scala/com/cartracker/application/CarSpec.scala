@@ -1,5 +1,6 @@
 package com.cartracker.application
 
+import java.time.LocalDateTime
 import java.util.UUID
 
 import akka.actor.ActorSystem
@@ -22,7 +23,7 @@ class CarSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
       val deviceActor = system.actorOf(Car.props("car", rep))
       val requestId = UUID.randomUUID()
 
-      val telemetry = Telemetry(10, Position(1, 1))
+      val telemetry = Telemetry(LocalDateTime.now(), 10, Position(1, 1))
 
       it("should reply with empty reading if no telemetry is known") {
         deviceActor.tell(Car.ReadTelemetry(requestId), probe.ref)
@@ -38,7 +39,7 @@ class CarSpec extends FunSpecLike with Matchers with BeforeAndAfterEach {
       }
 
       it("should reply with correct telemetry when telemetry recorded") {
-        val telemetry = Telemetry(10, Position(1, 1))
+        val telemetry = Telemetry(LocalDateTime.now(), 10, Position(1, 1))
 
         val probe2 = TestProbe()
 
