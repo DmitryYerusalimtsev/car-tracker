@@ -9,4 +9,6 @@ class MockTelemetryRepository extends TelemetryRepository {
   override def getTelemetry(carId: String): Option[Telemetry] = {
     Some(Telemetry(1, Position(1, 1)))
   }
+
+  override def getAllCarTelemetry(carIds: Seq[String]): Map[String, Option[Telemetry]] = Map()
 }

@@ -30,7 +30,9 @@ lazy val application = (project in file("application"))
   .settings(
     commonSettings,
 
-    libraryDependencies ++= akka ++ scalaTest ++ ignite
+    libraryDependencies ++= akka ++ scalaTest ++ ignite ++ Seq(
+      "org.scala-lang.modules" %% "scala-java8-compat" % "0.8.0"
+    )
   ).dependsOn(core)
 
 lazy val api = (project in file("api"))

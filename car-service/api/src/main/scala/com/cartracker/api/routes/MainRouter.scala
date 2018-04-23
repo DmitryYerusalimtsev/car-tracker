@@ -1,14 +1,13 @@
-package com.cartracker.api
+package com.cartracker.api.routes
 
 import java.util.Calendar
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import org.apache.ignite.Ignite
 
-final class MainRouter(system: ActorSystem, ignite: Ignite) {
-  val routes = defaultRoutes() ~ CarRouteConfig(system, ignite).route()
+final class MainRouter(system: ActorSystem) {
+  val routes = defaultRoutes() ~ CarRouteConfig(system).route()
 
   private def defaultRoutes(): Route = {
     get {
@@ -20,5 +19,5 @@ final class MainRouter(system: ActorSystem, ignite: Ignite) {
 }
 
 object MainRouter {
-  def apply(implicit system: ActorSystem, ignite: Ignite): MainRouter = new MainRouter(system, ignite)
+  def apply(implicit system: ActorSystem): MainRouter = new MainRouter(system)
 }

@@ -6,6 +6,7 @@ import akka.actor.Status.Failure
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.cartracker.application.MutableMap
 import com.cartracker.application.persistance.TelemetryRepository
+import com.cartracker.carservice.core.Telemetry
 
 final class CarsManager(telemetryRep: TelemetryRepository) extends Actor with ActorLogging {
 
@@ -33,6 +34,11 @@ final class CarsManager(telemetryRep: TelemetryRepository) extends Actor with Ac
         case Some(actor) => sender() ! RespondCar(id, actor)
         case None => sender() ! Failure
       }
+
+    case GetAllCarTelemetry(id) =>
+      log.info("Retrieving all car telemetry")
+      val result = telemetryRep.getAllCarTelemetry(carIdToActor.keySet.toSeq)
+      sender() ! AllCarTelemetry(id, result)
   }
 }
 
@@ -40,8 +46,15 @@ object CarsManager {
   def props(telemetryRep: TelemetryRepository): Props = Props(new CarsManager(telemetryRep))
 
   final case class RequestTrackingCar(requestId: UUID, carId: String)
+
   final case class CarTracking(requestId: UUID)
 
   final case class GetCar(requestId: UUID, carId: String)
+
   final case class RespondCar(requestId: UUID, car: ActorRef)
+
+  final case class GetAllCarTelemetry(requestId: UUID)
+
+  final case class AllCarTelemetry(requestId: UUID, telemetryMap: Map[String, Option[Telemetry]])
+
 }
